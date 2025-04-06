@@ -30,6 +30,6 @@ const ConsultaMedicaSchema: Schema = new Schema(
 );
 
 export default mongoose.model<IConsultaMedicateModel>(
-  "ConsultaMedica",
+  "consulta_medica",
   ConsultaMedicaSchema
 );
