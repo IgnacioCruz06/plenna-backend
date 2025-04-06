@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
@@ -10,5 +10,10 @@ export const config = {
     logToFiles: process.env.LOG_TO_FILES
       ? process.env.LOG_TO_FLES === "true"
       : false,
+  },
+  db: {
+    username: process.env.MONGODB_USERNAME || "",
+    password: process.env.MONGODB_PASSWORD || "",
+    dbName: process.env.DB_NAME || "",
   },
 };
