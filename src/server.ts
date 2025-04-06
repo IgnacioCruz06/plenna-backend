@@ -6,6 +6,7 @@ import { requestLogger } from "./middlewares/resquestLogger";
 import routerPaciente from "./routes/Paciente";
 import { validateEmptyPostBody } from "./middlewares/emptyBody";
 import http from "http";
+import doctorRouter from "./routes/Doctor";
 
 const app = express();
 const server = http.createServer(app);
@@ -30,7 +31,9 @@ app.use(validateEmptyPostBody);
 
 //routes
 //routes(app);
-app.use("/api/v1", routerPaciente);
+const apiRootUrl= "/api/v1"
+app.use(apiRootUrl, routerPaciente);
+app.use(apiRootUrl, doctorRouter);
 
 app.get("/", (_req, res) => {
   res.send("Welcome to this new server :)");
@@ -39,7 +42,7 @@ app.get("/", (_req, res) => {
 export function setupServer(): Promise<void> {
   return new Promise((resolve, _reject) => {
     server.listen(PORT, () => {
-      log.info(`Server started at port ${PORT}`);
+      log.info(`Server started and listening at http://localhost:${PORT}${apiRootUrl}`);
       resolve();
     });
   });
