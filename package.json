@@ -2,10 +2,10 @@
   "name": "plenna-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "build": "tsc",
+    "build": "rm -rf /dist && tsc",
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +22,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "5.1.0",
+    "joi": "^17.13.3",
+    "mongoose": "^8.13.2",
     "morgan": "1.10.0",
     "require-dir-all": "0.4.15",
     "winston": "3.17.0"
