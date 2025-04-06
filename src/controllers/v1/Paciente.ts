@@ -1,11 +1,12 @@
-import { /* NextFunction, */ Request, Response } from "express";
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { log } from "../../libraries/Log";
 import Paciente from "../../models/Paciente";
+import { validateId } from "../../utils/validateId";
 
 export const handleCreatePatient = async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const { body } = req;
 
     const patient = await new Paciente({
       _id: new mongoose.Types.ObjectId(),
@@ -13,16 +14,12 @@ export const handleCreatePatient = async (req: Request, res: Response) => {
       lastName: body.lastName,
       birthDate: body.birthDate,
       gender: body.gender,
-      contact: {
-        email: body.contact.email,
-        phone: body.contact.phone,
-        address: body.contact.address,
-      },
-      medicalInfo: {
-        bloodType: body.medicalInfo?.bloodType, //optional
-        allergies: body.medicalInfo?.allergies, //optional string[]
-        chronicDiseases: body.medicalInfo?.chronicDiseases, //optional string[]
-      },
+      email: body.email,
+      phone: body.phone,
+      address: body.address,
+      bloodType: body?.bloodType ?? "", //optional
+      allergies: body?.allergies ?? [], //optional string[]
+      chronicDiseases: body?.chronicDisease ?? [], //optional string[]
     });
 
     await patient.save();
@@ -39,8 +36,8 @@ export const handleCreatePatient = async (req: Request, res: Response) => {
 
 export const handleGetPatientById = async (req: Request, res: Response) => {
   try {
-    const patientId = req.params.patientId;
-    console.log("🚀 ~ handleGetPatientById ~ patientId:", patientId);
+    validateId(req, res);
+    const patientId = req.params.id;
 
     const patient = await Paciente.findById(patientId);
 
@@ -62,7 +59,6 @@ export const handleGetPatientById = async (req: Request, res: Response) => {
 export const handleGetAllPatient = async (_req: Request, res: Response) => {
   try {
     const patients = await Paciente.find();
-    console.log("🚀 ~ handleGetAllPatient ~ patients:", patients);
 
     if (!patients) {
       return;
@@ -80,17 +76,20 @@ export const handleGetAllPatient = async (_req: Request, res: Response) => {
 
 export const handleUpdatePatient = async (req: Request, res: Response) => {
   try {
-    const patientId = req.params.patientId;
-    const body = req.body;
+    validateId(req, res);
+    const patientId = req.params.id;
+    const { body } = req;
 
-    const patient = await Paciente.findByIdAndUpdate(patientId, body);
+    const patient = await Paciente.findByIdAndUpdate(
+      patientId,
+      { $set: body },
+      { new: true, runValidators: true }
+    );
 
     if (!patient) {
       res.status(404).json({ message: "Not found." });
       return;
     }
-
-    //await patient.setUpdate(body); //TODO: complete this implementation
 
     res.status(200).json({ message: "ok", data: patient });
   } catch (error) {
@@ -104,7 +103,8 @@ export const handleUpdatePatient = async (req: Request, res: Response) => {
 
 export const handleDeletePatient = async (req: Request, res: Response) => {
   try {
-    const patientId = req.params.patientId;
+    validateId(req, res);
+    const patientId = req.params.id;
 
     const patient = await Paciente.findByIdAndDelete(patientId);
 
@@ -122,11 +122,3 @@ export const handleDeletePatient = async (req: Request, res: Response) => {
     });
   }
 };
-
-/* export default {
-  handleCreatePatient,
-  handleGetAllPatient,
-  handleGetPatientById,
-  handleUpdatePatient,
-  handleDeletePatient,
-}; */

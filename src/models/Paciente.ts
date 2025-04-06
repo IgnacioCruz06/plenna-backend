@@ -5,16 +5,12 @@ export interface IPaciente {
   lastName: string;
   birthDate: Date;
   gender: string;
-  contact: {
-    email: string;
-    phone: string;
-    address: string;
-  };
-  medicalInfo: {
-    bloodType?: string;
-    allergies?: string[];
-    chronicDiseases?: string[];
-  };
+  email: string;
+  phone: string;
+  address: string;
+  bloodType?: string;
+  allergies?: string[];
+  chronicDiseases?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,16 +23,12 @@ const PacienteSchema: Schema = new Schema(
     lastName: { type: String, required: true },
     birthDate: { type: Date, required: true },
     gender: { type: String, enum: ["F", "M", "Other"], required: true },
-    contact: {
-      email: { type: String, required: true },
-      phone: { type: String },
-      address: { type: String },
-    },
-    medicalInfo: {
-      bloodType: String,
-      allergies: [String],
-      chronicDiseases: [String],
-    },
+    email: { type: String, required: true },
+    phone: { type: String },
+    address: { type: String },
+    bloodType: String,
+    allergies: [String],
+    chronicDiseases: [String],
   },
   { timestamps: true }
 );
