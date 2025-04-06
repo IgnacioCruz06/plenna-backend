@@ -3,12 +3,12 @@ import morgan from "morgan";
 import { config } from "./config";
 import { log, requestLogStream } from "./libraries/Log";
 import { requestLogger } from "./middlewares/resquestLogger";
-import router from "./routes/Paciente";
+import routerPaciente from "./routes/Paciente";
 import { validateEmptyPostBody } from "./middlewares/emptyBody";
-import http from "http"
+import http from "http";
 
 const app = express();
-const server = http.createServer(app)
+const server = http.createServer(app);
 
 const PORT = config.server.port || 8000;
 
@@ -30,16 +30,11 @@ app.use(validateEmptyPostBody);
 
 //routes
 //routes(app);
-app.use("/api/v1", router);
+app.use("/api/v1", routerPaciente);
 
 app.get("/", (_req, res) => {
   res.send("Welcome to this new server :)");
 });
-
-/* app.listen(PORT, () => {
-  console.log(`--Server started at port ${PORT}`);
-  log.info(`Server started at port ${PORT}`);
-}); */
 
 export function setupServer(): Promise<void> {
   return new Promise((resolve, _reject) => {
