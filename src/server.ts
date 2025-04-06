@@ -3,7 +3,7 @@ import morgan from "morgan";
 import { config } from "./config";
 import { log, requestLogStream } from "./libraries/Log";
 import { requestLogger } from "./middlewares/resquestLogger";
-import { routes } from "./routes";
+import router from "./routes/Paciente";
 import mongoose from "mongoose";
 
 const app = express();
@@ -45,8 +45,8 @@ app.use(requestLogger);
 //app.use(checkEmptyPostBody);
 
 //routes
-routes(app);
-//app.use("/api/v1/")
+//routes(app);
+app.use("/api/v1", router)
 
 app.get("/", (_req, res) => {
   res.send("Welcome to this new server :)");
