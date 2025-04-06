@@ -1,31 +1,31 @@
-import { NextFunction, Request, Response } from "express";
+import { /* NextFunction, */ Request, Response } from "express";
 import mongoose from "mongoose";
-import Paciente from "../../models/Paciente";
 import { log } from "../../libraries/Log";
+import Paciente from "../../models/Paciente";
 
-const handleCreatePatient = (req: Request, res: Response) => {
+export const handleCreatePatient = async (req: Request, res: Response) => {
   try {
     const body = req.body;
 
-    const patient = new Paciente({
+    const patient = await new Paciente({
       _id: new mongoose.Types.ObjectId(),
       firstName: body.firstName,
       lastName: body.lastName,
       birthDate: body.birthDate,
       gender: body.gender,
       contact: {
-        email: body.contact,
-        phone: body.phone,
-        address: body.address,
+        email: body.contact.email,
+        phone: body.contact.phone,
+        address: body.contact.address,
       },
       medicalInfo: {
-        bloodType: body.medicalInfo.bloodType, //optional
-        allergies: body.medicalInfo.allergies, //optional string[]
-        chronicDiseases: body.medicalInfo.chronicDiseases, //optional string[]
+        bloodType: body.medicalInfo?.bloodType, //optional
+        allergies: body.medicalInfo?.allergies, //optional string[]
+        chronicDiseases: body.medicalInfo?.chronicDiseases, //optional string[]
       },
     });
 
-    patient.save();
+    await patient.save();
 
     res.status(201).json({ message: "created", data: patient });
   } catch (error) {
@@ -37,14 +37,16 @@ const handleCreatePatient = (req: Request, res: Response) => {
   }
 };
 
-const handleGetPatientById = (req: Request, res: Response) => {
+export const handleGetPatientById = async (req: Request, res: Response) => {
   try {
     const patientId = req.params.patientId;
+    console.log("🚀 ~ handleGetPatientById ~ patientId:", patientId);
 
-    const patient = Paciente.findById(patientId);
+    const patient = await Paciente.findById(patientId);
 
     if (!patient) {
       res.status(404).json({ message: "Not found." });
+      return;
     }
 
     res.status(200).json({ message: "ok", data: patient });
@@ -57,9 +59,10 @@ const handleGetPatientById = (req: Request, res: Response) => {
   }
 };
 
-const handleGetAllPatient = (_req: Request, res: Response) => {
+export const handleGetAllPatient = async (_req: Request, res: Response) => {
   try {
-    const patients = Paciente.find();
+    const patients = await Paciente.find();
+    console.log("🚀 ~ handleGetAllPatient ~ patients:", patients);
 
     if (!patients) {
       return;
@@ -75,18 +78,19 @@ const handleGetAllPatient = (_req: Request, res: Response) => {
   }
 };
 
-const handleUpdatePatient = (req: Request, res: Response) => {
+export const handleUpdatePatient = async (req: Request, res: Response) => {
   try {
     const patientId = req.params.patientId;
     const body = req.body;
 
-    const patient = Paciente.findById(patientId);
+    const patient = await Paciente.findByIdAndUpdate(patientId, body);
 
     if (!patient) {
       res.status(404).json({ message: "Not found." });
+      return;
     }
 
-    patient.setUpdate(body); //TODO: complete this implementation
+    //await patient.setUpdate(body); //TODO: complete this implementation
 
     res.status(200).json({ message: "ok", data: patient });
   } catch (error) {
@@ -98,14 +102,15 @@ const handleUpdatePatient = (req: Request, res: Response) => {
   }
 };
 
-const handledeletePatient = (req: Request, res: Response) => {
+export const handleDeletePatient = async (req: Request, res: Response) => {
   try {
     const patientId = req.params.patientId;
 
-    const patient = Paciente.findByIdAndDelete(patientId);
+    const patient = await Paciente.findByIdAndDelete(patientId);
 
     if (!patient) {
       res.status(404).json({ message: "Not found." });
+      return;
     }
 
     res.status(204).json({ message: "deleted" });
@@ -117,3 +122,11 @@ const handledeletePatient = (req: Request, res: Response) => {
     });
   }
 };
+
+/* export default {
+  handleCreatePatient,
+  handleGetAllPatient,
+  handleGetPatientById,
+  handleUpdatePatient,
+  handleDeletePatient,
+}; */
