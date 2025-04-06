@@ -4,22 +4,11 @@ import { config } from "./config";
 import { log, requestLogStream } from "./libraries/Log";
 import { requestLogger } from "./middlewares/resquestLogger";
 import router from "./routes/Paciente";
-import mongoose from "mongoose";
+import { validateEmptyPostBody } from "./middlewares/emptyBody";
+import http from "http"
 
 const app = express();
-
-const connectUrl = `mongodb+srv://${config.db.username}:${config.db.password}@plenna-back-ignacio.lxdew55.mongodb.net/?appName=${config.db.dbName}`;
-//`mongodb+srv://${config.db.username}:${config.db.password}@plenna-back-ignacio.lxdew55.mongodb.net/?retryWrites=true&w=majority&appName=plenna-back-ignacio`
-
-mongoose
-  .connect(connectUrl, { retryWrites: true, w: "majority" })
-  .then(() => {
-    log.info("Database connected successfully.");
-  })
-  .catch((error) => {
-    log.error("Error trying to connect to the database.");
-    log.error(error);
-  });
+const server = http.createServer(app)
 
 const PORT = config.server.port || 8000;
 
@@ -33,26 +22,30 @@ app.use(express.json());
 // Use morgan to log requests to the console
 app.use(morgan("short", { stream: requestLogStream }));
 
-// Healthcheck
-app.get("/ping", (_req, res, _next) => {
-  res.status(200).json({ message: "pong" });
-});
-
 // TODO: Add cors config
 
 //Global middlewares
 app.use(requestLogger);
-//app.use(checkEmptyPostBody);
+app.use(validateEmptyPostBody);
 
 //routes
 //routes(app);
-app.use("/api/v1", router)
+app.use("/api/v1", router);
 
 app.get("/", (_req, res) => {
   res.send("Welcome to this new server :)");
 });
 
-app.listen(PORT, () => {
+/* app.listen(PORT, () => {
   console.log(`--Server started at port ${PORT}`);
   log.info(`Server started at port ${PORT}`);
-});
+}); */
+
+export function setupServer(): Promise<void> {
+  return new Promise((resolve, _reject) => {
+    server.listen(PORT, () => {
+      log.info(`Server started at port ${PORT}`);
+      resolve();
+    });
+  });
+}

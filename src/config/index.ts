@@ -12,8 +12,6 @@ export const config = {
       : false,
   },
   db: {
-    username: process.env.MONGODB_USERNAME || "",
-    password: process.env.MONGODB_PASSWORD || "",
-    dbName: process.env.DB_NAME || "",
+    connection_string: process.env.MONGODB_CONNECTION_STRING || "",
   },
 };
