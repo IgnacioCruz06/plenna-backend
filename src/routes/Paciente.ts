@@ -12,20 +12,20 @@ import {
   UpdatePacienteSchema,
 } from "../validators/PacienteSchema";
 
-const router = express.Router();
+const routerPaciente = express.Router();
 
-router.post(
+routerPaciente.post(
   "/paciente",
   validateBody(CreatePacienteSchema),
   handleCreatePatient
 );
-router.get("/paciente", handleGetAllPatient);
-router.get("/paciente/:id", handleGetPatientById);
-router.patch(
+routerPaciente.get("/paciente", handleGetAllPatient);
+routerPaciente.get("/paciente/:id", handleGetPatientById);
+routerPaciente.patch(
   "/paciente/:id",
   validateBody(UpdatePacienteSchema),
   handleUpdatePatient
 );
-router.delete("/paciente/:id", handleDeletePatient);
+routerPaciente.delete("/paciente/:id", handleDeletePatient);
 
-export default router;
+export default routerPaciente;

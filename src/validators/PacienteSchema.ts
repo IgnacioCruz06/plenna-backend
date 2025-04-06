@@ -8,8 +8,8 @@ export const CreatePacienteSchema = Joi.object<IPaciente>({
   gender: Joi.string().valid("F", "M", "Other").required(),
   email: Joi.string().email().required(),
   phone: Joi.string().length(10).required(),
-  address: Joi.string().required(),
-  bloodType: Joi.string().optional(),
+  address: Joi.string().optional().allow(null),
+  bloodType: Joi.string().required(),
   allergies: Joi.array().items(Joi.string().optional()),
   chronicDiseases: Joi.array().items(Joi.string().optional()),
 });

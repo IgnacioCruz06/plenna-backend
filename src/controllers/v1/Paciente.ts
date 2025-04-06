@@ -1,35 +1,26 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
 import { log } from "../../libraries/Log";
-import Paciente from "../../models/Paciente";
 import { validateId } from "../../utils/validateId";
+import {
+  createNewPatient,
+  deletePatientById,
+  getAllPatients,
+  getPatientById,
+  updatePatient,
+} from "../../services/PacienteService";
 
 export const handleCreatePatient = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    const patient = await new Paciente({
-      _id: new mongoose.Types.ObjectId(),
-      firstName: body.firstName,
-      lastName: body.lastName,
-      birthDate: body.birthDate,
-      gender: body.gender,
-      email: body.email,
-      phone: body.phone,
-      address: body.address,
-      bloodType: body?.bloodType ?? "", //optional
-      allergies: body?.allergies ?? [], //optional string[]
-      chronicDiseases: body?.chronicDisease ?? [], //optional string[]
-    });
-
-    await patient.save();
+    const patient = await createNewPatient(body);
 
     res.status(201).json({ message: "created", data: patient });
   } catch (error) {
     log.error("An error occurred when trying to create a new Patient.");
     log.error(error);
     res.status(500).json({
-      error: "An error occurred when trying to create a new Patient.",
+      error: "Internal server error.",
     });
   }
 };
@@ -39,37 +30,32 @@ export const handleGetPatientById = async (req: Request, res: Response) => {
     validateId(req, res);
     const patientId = req.params.id;
 
-    const patient = await Paciente.findById(patientId);
+    const patient = await getPatientById(patientId);
 
-    if (!patient) {
+    if (patient) {
+      res.status(200).json({ message: "ok", data: patient });
+    } else {
       res.status(404).json({ message: "Not found." });
-      return;
     }
-
-    res.status(200).json({ message: "ok", data: patient });
   } catch (error) {
     log.error("An error occurred when trying to get a patient.");
     log.error(error);
     res.status(500).json({
-      error: "An error occurred when trying to get a patient.",
+      error: "Internal server error.",
     });
   }
 };
 
 export const handleGetAllPatient = async (_req: Request, res: Response) => {
   try {
-    const patients = await Paciente.find();
-
-    if (!patients) {
-      return;
-    }
+    const patients = await getAllPatients();
 
     res.status(200).json({ message: "ok", data: patients });
   } catch (error) {
     log.error("An error occurred when trying to get all patient.");
     log.error(error);
     res.status(500).json({
-      error: "An error occurred when trying to get all patient.",
+      error: "Internal server error.",
     });
   }
 };
@@ -80,23 +66,18 @@ export const handleUpdatePatient = async (req: Request, res: Response) => {
     const patientId = req.params.id;
     const { body } = req;
 
-    const patient = await Paciente.findByIdAndUpdate(
-      patientId,
-      { $set: body },
-      { new: true, runValidators: true }
-    );
+    const patient = await updatePatient(patientId, body);
 
-    if (!patient) {
+    if (patient) {
+      res.status(200).json({ message: "ok", data: patient });
+    } else {
       res.status(404).json({ message: "Not found." });
-      return;
     }
-
-    res.status(200).json({ message: "ok", data: patient });
   } catch (error) {
     log.error("An error occurred when trying to update a patient.");
     log.error(error);
     res.status(500).json({
-      error: "An error occurred when trying to update a patient.",
+      error: "Internal server error.",
     });
   }
 };
@@ -106,14 +87,13 @@ export const handleDeletePatient = async (req: Request, res: Response) => {
     validateId(req, res);
     const patientId = req.params.id;
 
-    const patient = await Paciente.findByIdAndDelete(patientId);
+    const patient = await deletePatientById(patientId);
 
-    if (!patient) {
+    if (patient) {
+      res.status(204).json({ message: "deleted" });
+    } else {
       res.status(404).json({ message: "Not found." });
-      return;
     }
-
-    res.status(204).json({ message: "deleted" });
   } catch (error) {
     log.error("An error occurred when trying to delete a patient.");
     log.error(error);

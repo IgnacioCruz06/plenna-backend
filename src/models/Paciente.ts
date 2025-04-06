@@ -7,8 +7,8 @@ export interface IPaciente {
   gender: string;
   email: string;
   phone: string;
-  address: string;
-  bloodType?: string;
+  address?: string;
+  bloodType: string;
   allergies?: string[];
   chronicDiseases?: string[];
   createdAt: Date;
@@ -24,9 +24,9 @@ const PacienteSchema: Schema = new Schema(
     birthDate: { type: Date, required: true },
     gender: { type: String, enum: ["F", "M", "Other"], required: true },
     email: { type: String, required: true },
-    phone: { type: String },
-    address: { type: String },
-    bloodType: String,
+    phone: { type: String, required: true },
+    address: String,
+    bloodType: { type: String, required: true },
     allergies: [String],
     chronicDiseases: [String],
   },
