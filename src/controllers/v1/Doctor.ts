@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { log } from "../../libraries/Log";
 import doctorService from "../../services/DoctorService";
 import { Controller } from "../../libraries/Controller";
+import doctorsAvailabilityData from "../../doctorsAvailability.json";
 
 class DoctorController {
   public handleDoctorsAvailability = async (
@@ -9,7 +10,11 @@ class DoctorController {
     res: Response
   ): Promise<any> => {
     try {
-      const availability = await doctorService.getDoctorsAvailability();
+      const schedules = doctorsAvailabilityData.schedules;
+
+      const availability = await doctorService.getDoctorsAvailability(
+        schedules
+      );
 
       return Controller.ok(res, availability);
     } catch (error) {
