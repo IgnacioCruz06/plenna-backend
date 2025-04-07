@@ -47,3 +47,5 @@ export function setupServer(): Promise<void> {
     });
   });
 }
+
+export default app
