@@ -57,6 +57,7 @@ This is the backend for **Plenna**, a medical management system designed to hand
 | **npm run dev** | Run in development mode with hot reload |
 | **npm run build** | Compile TypeScript to JavaScript |
 | **npm start** | Run the compiled app in production mode |
+| **npm test** | Run test cases in the folder src/tests |
 
 ## 🌐 API Structure
 
@@ -64,7 +65,7 @@ The API is versioned under /api/v1 and follows RESTful conventions.
 Example Endpoints:
 
     GET  /api/v1/paciente
-    POST /api/v1/doctors
+    GET /api/v1/doctors
 
 ## 🧪 Testing
 
